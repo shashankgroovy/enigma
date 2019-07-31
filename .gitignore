@@ -1,0 +1,13 @@
+# Vim swap files
+*.swp
+*.swo
+
+# Go binary
+enigma
+*.o
+
+# Fresh
+runner.conf
+
+# Folders
+tmp/
