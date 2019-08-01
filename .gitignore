@@ -11,3 +11,7 @@ runner.conf
 
 # Folders
 tmp/
+
+# Envs
+*.env
+*.envrc
