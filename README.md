@@ -14,6 +14,10 @@ secrets.
 Secret messages will self-destruct/expire after it has been viewed a given
 number of times or if the time expires.
 
+# [Live Demo](https://blooming-hollows-63159.herokuapp.com/)
+
+See it live!
+
 Requirements
 ------------
 * Go version v1.12
@@ -27,8 +31,8 @@ Getting Started
 Run Enima backend server by issuing the following commands:
 
 ```
-λ go build
-λ ./enigma
+λ go build -o bin/enigma -v
+λ ./bin/enigma
 ```
 And the server will be up and running on the specified port.
 
@@ -37,7 +41,7 @@ And the server will be up and running on the specified port.
 > to use [direnv](https://direnv.net/). Simply, make the variables present in
 > `.env.example` available.
 
-###Development
+### Development
 
 During development Hot-reloading is quite helpful.
 [Fresh](https://github.com/gravityblast/fresh) can be used for hot-reloading go
