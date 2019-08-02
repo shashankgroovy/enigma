@@ -27,7 +27,7 @@ func (a *App) Initialize(ctx context.Context) {
 	if err != nil {
 		log.Fatal("Couldn't connect to the database", err)
 	}
-	testDbConnection(client)
+	models.TestDbConnection(client)
 
 	a.DB = client.Database(models.DB_NAME)
 
@@ -49,16 +49,4 @@ func (a *App) Run(httpPort string) {
 		ReadTimeout:  15 * time.Second,
 	}
 	log.Fatal(server.ListenAndServe())
-}
-
-// Pings the mongo database
-func testDbConnection(client *mongo.Client) {
-
-	// Check database connection
-	err := client.Ping(context.TODO(), nil)
-	if err != nil {
-		log.Fatal("Couldn't connect to the database", err)
-	} else {
-		log.Println("Database connected!")
-	}
 }

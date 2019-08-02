@@ -49,6 +49,7 @@ func setupApiRoutes(r *mux.Router) *mux.Router {
 	api.HandleFunc("/secret", createSecretHandler).Methods(http.MethodPost, http.MethodOptions)
 	api.HandleFunc("/secret/{hash}", getSecretHandler).Methods(http.MethodGet)
 	api.HandleFunc("/secret/{hash}", updateSecretHandler).Methods(http.MethodPut, http.MethodOptions)
+	api.HandleFunc("/secret/{hash}", deleteSecretHandler).Methods(http.MethodDelete)
 
 	// CORS
 	api.Use(mux.CORSMethodMiddleware(api))
