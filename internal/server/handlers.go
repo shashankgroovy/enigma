@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"enigma/internal/models"
+	"enigma/internal/utils"
 
 	guuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -39,15 +40,27 @@ func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 	expiresAt, _ := strconv.Atoi(r.FormValue("expiresAt"))
 	remainingViews, _ := strconv.Atoi(r.FormValue("remainingViews"))
 
+	// Generate a unique uuid for hash
+	uuid := guuid.New().String()
+
+	// Encrypt the secret message with uuid as a 32 byte encryption key
+	cipherText, err := utils.Encrypt([]byte(secretText), []byte(uuid[:32]))
+
+	if err != nil {
+		log.Fatal("Couldn't encrypt text", err)
+	}
+
 	sec := models.Secret{
-		Hash:           guuid.New().String(),
-		SecretText:     secretText,
+		Hash:           uuid,
+		SecretText:     string(cipherText),
 		CreatedAt:      createdAt,
 		ExpiresAt:      expiresAt,
 		RemainingViews: remainingViews,
 	}
 
 	sec.CreateSecret()
+
+	sec.SecretText = secretText
 	json.NewEncoder(w).Encode(sec)
 }
 
@@ -60,6 +73,15 @@ func getSecretHandler(w http.ResponseWriter, r *http.Request) {
 	sec.Hash = secretHash
 
 	sec.GetSecret()
+
+	// Decrypt the secret message with secret hash
+	secretText, err := utils.Decrypt([]byte(sec.SecretText), []byte(secretHash[:32]))
+
+	if err != nil {
+		log.Fatal("Couldn't decrypt text", err)
+	}
+
+	sec.SecretText = string(secretText)
 	json.NewEncoder(w).Encode(sec)
 }
 
@@ -72,6 +94,15 @@ func updateSecretHandler(w http.ResponseWriter, r *http.Request) {
 	sec.Hash = secretHash
 
 	sec.UpdateSecret()
+
+	// Decrypt the secret message with secret hash
+	secretText, err := utils.Decrypt([]byte(sec.SecretText), []byte(secretHash[:32]))
+
+	if err != nil {
+		log.Fatal("Couldn't decrypt text", err)
+	}
+
+	sec.SecretText = string(secretText)
 	json.NewEncoder(w).Encode(sec)
 }
 
