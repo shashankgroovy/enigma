@@ -13,12 +13,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// App struct for keeping things simple and concise.
 type App struct {
 	Router *mux.Router
 	DB     *mongo.Database
 }
 
-// Initializes a database and sets up routing
+// Initialize method initializes a database and sets up routing
 func (a *App) Initialize(ctx context.Context) {
 
 	// Setup database
@@ -36,7 +37,7 @@ func (a *App) Initialize(ctx context.Context) {
 
 }
 
-// Starts a http.Server
+// Run method starts a http.Server
 func (a *App) Run(httpPort string) {
 
 	log.Printf("Server running on port %s\n", httpPort)

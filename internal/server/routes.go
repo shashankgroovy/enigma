@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Setup application routes
+// ConfigureRoutes setups up app routes and static routes
 func ConfigureRoutes() *mux.Router {
 
 	r := mux.NewRouter().StrictSlash(true)

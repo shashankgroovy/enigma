@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 
 	"enigma/internal/models"
@@ -14,8 +13,6 @@ import (
 	guuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
-
-var db_collection = os.Getenv("MONGO_COLLECTION")
 
 // controller for rendering the homepage
 func baseHandler(w http.ResponseWriter, r *http.Request) {

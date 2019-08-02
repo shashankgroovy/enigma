@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+// Struct for containing secret
 type Secret struct {
 	Hash           string `json:"hash" bson:"hash"`
 	SecretText     string `json:"secretText" bson:"secretText"`
@@ -15,7 +16,7 @@ type Secret struct {
 	RemainingViews int    `json:"remainingViews" bson:"remainingViews"`
 }
 
-// Creates a new secret
+// CreateSecret method creates a new secret
 func (s *Secret) CreateSecret() {
 	collection := GetDefaultCollection(DB)
 
@@ -27,7 +28,7 @@ func (s *Secret) CreateSecret() {
 	log.Print("Created a secret! ", s.Hash)
 }
 
-// Fetches a secret
+// GetSecret method fetches a secret
 func (s *Secret) GetSecret() {
 	collection := GetDefaultCollection(DB)
 
@@ -43,7 +44,7 @@ func (s *Secret) GetSecret() {
 	log.Print("Found a secret! ", s.Hash)
 }
 
-// Updates a secret
+// UpdateSecret method updates a given secret
 func (s *Secret) UpdateSecret() {
 	collection := GetDefaultCollection(DB)
 
@@ -64,7 +65,7 @@ func (s *Secret) UpdateSecret() {
 	log.Print("Updated a secret! ", s.Hash)
 }
 
-// Deletes a secret
+// DeleteSecrets method deletes a given secret
 func (s *Secret) DeleteSecret() {
 	collection := GetDefaultCollection(DB)
 

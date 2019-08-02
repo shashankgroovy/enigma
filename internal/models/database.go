@@ -19,16 +19,16 @@ var (
 	DB_COLLECTION string = os.Getenv("MONGO_COLLECTION")
 )
 
-// configure and setup mongo
+// ConfigureDB initializes a mongo connection client and returns it
 func ConfigureDB(ctx context.Context) (*mongo.Client, error) {
-	connection_string := fmt.Sprintf(`mongodb://%s:%s@%s/%s`,
+	connectionString := fmt.Sprintf(`mongodb://%s:%s@%s/%s`,
 		DB_USER,
 		DB_PASS,
 		DB_HOST,
 		DB_NAME,
 	)
 
-	clientOptions := options.Client().ApplyURI(connection_string)
+	clientOptions := options.Client().ApplyURI(connectionString)
 	client, err := mongo.Connect(ctx, clientOptions)
 
 	if err != nil {
@@ -40,7 +40,8 @@ func ConfigureDB(ctx context.Context) (*mongo.Client, error) {
 
 }
 
-// Pings the mongo database
+// TestDbConnection tests mongo connection by sending pings to the mongo
+// database
 func TestDbConnection(client *mongo.Client) {
 
 	// Check database connection
@@ -52,7 +53,7 @@ func TestDbConnection(client *mongo.Client) {
 	}
 }
 
-// Returns the secret collection
+// GetDefaultCollection returns the "secret" collection
 func GetDefaultCollection(db *mongo.Database) (col *mongo.Collection) {
 	col = db.Collection(DB_COLLECTION)
 	return
