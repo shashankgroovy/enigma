@@ -16,7 +16,7 @@ func main() {
 	)
 	defer cancel()
 
-	// create an app
+	// Create an app
 	app := App{}
 	app.Initialize(ctx)
 	app.Run(os.Getenv("PORT"))

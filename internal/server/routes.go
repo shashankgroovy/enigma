@@ -16,16 +16,17 @@ func ConfigureRoutes() *mux.Router {
 	r.Use(utils.RequestLogger)
 
 	// Index urls
-	r.HandleFunc("/", baseHandler).Methods("GET")
-	r.HandleFunc("/health", healthCheckHandler).Methods("GET")
+	r.HandleFunc("/", baseHandler).Methods(http.MethodGet)
+	r.HandleFunc("/health", healthCheckHandler).Methods(http.MethodGet)
 
-	r = createStaticRoutes(r)
-	r = createApiRoutes(r)
+	r = setupStaticRoutes(r)
+	r = setupApiRoutes(r)
+
 	return r
 }
 
 // Creates routes for serving static assets
-func createStaticRoutes(r *mux.Router) *mux.Router {
+func setupStaticRoutes(r *mux.Router) *mux.Router {
 
 	// Serve static files
 	var dir string
@@ -41,12 +42,15 @@ func createStaticRoutes(r *mux.Router) *mux.Router {
 }
 
 // Creates routes for rest api
-func createApiRoutes(r *mux.Router) *mux.Router {
+func setupApiRoutes(r *mux.Router) *mux.Router {
 
 	// Initialize the rest api
 	api := r.PathPrefix("/api/v1").Subrouter()
-	api.HandleFunc("/secret", createSecretHandler).Methods("POST")
-	api.HandleFunc("/secret/{hash}", getSecretHandler).Methods("GET")
-	api.HandleFunc("/secret/{hash}", updateSecretHandler).Methods("PUT")
+	api.HandleFunc("/secret", createSecretHandler).Methods(http.MethodPost, http.MethodOptions)
+	api.HandleFunc("/secret/{hash}", getSecretHandler).Methods(http.MethodGet)
+	api.HandleFunc("/secret/{hash}", updateSecretHandler).Methods(http.MethodPut, http.MethodOptions)
+
+	// CORS
+	api.Use(mux.CORSMethodMiddleware(api))
 	return r
 }

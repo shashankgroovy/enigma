@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"enigma/internal/models"
@@ -19,8 +18,10 @@ type App struct {
 	DB     *mongo.Database
 }
 
+// Initializes a database and sets up routing
 func (a *App) Initialize(ctx context.Context) {
 
+	// Setup database
 	client, err := models.ConfigureDB(ctx)
 
 	if err != nil {
@@ -28,13 +29,14 @@ func (a *App) Initialize(ctx context.Context) {
 	}
 	testDbConnection(client)
 
-	a.DB = client.Database(os.Getenv("MONGO_DBNAME"))
+	a.DB = client.Database(models.DB_NAME)
 
 	// Setup routes
 	a.Router = server.ConfigureRoutes()
 
 }
 
+// Starts a http.Server
 func (a *App) Run(httpPort string) {
 
 	log.Printf("Server running on port %s\n", httpPort)
@@ -49,7 +51,7 @@ func (a *App) Run(httpPort string) {
 	log.Fatal(server.ListenAndServe())
 }
 
-// pings the mongo database
+// Pings the mongo database
 func testDbConnection(client *mongo.Client) {
 
 	// Check database connection
