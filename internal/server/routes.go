@@ -4,9 +4,8 @@ import (
 	"flag"
 	"net/http"
 
-	"enigma/internal/utils"
-
 	"github.com/gorilla/mux"
+	"github.com/shashankgroovy/enigma/internal/utils"
 )
 
 // ConfigureRoutes setups up app routes and static routes

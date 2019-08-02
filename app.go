@@ -6,10 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"enigma/internal/models"
-	"enigma/internal/server"
-
 	"github.com/gorilla/mux"
+	"github.com/shashankgroovy/enigma/internal/models"
+	"github.com/shashankgroovy/enigma/internal/server"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

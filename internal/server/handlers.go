@@ -7,11 +7,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"enigma/internal/models"
-	"enigma/internal/utils"
-
 	guuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/shashankgroovy/enigma/internal/models"
+	"github.com/shashankgroovy/enigma/internal/utils"
 )
 
 // controller for rendering the homepage
