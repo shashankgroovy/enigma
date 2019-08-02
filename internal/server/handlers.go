@@ -1,12 +1,16 @@
-package main
+package server
 
 import (
 	"encoding/json"
 	"html/template"
 	"net/http"
+	"os"
 
+	guuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
+
+var db_collection = os.Getenv("MONGO_COLLECTION")
 
 // controller for rendering the homepage
 func baseHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,11 +28,19 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 
 // controller to create a secret message
 func createSecretHandler(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode("Create a post")
+
+	json.NewEncoder(w).Encode(guuid.New().String())
 }
 
-// controller to get given secret message
+// controller to get a given secret message
 func getSecretHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	secretHash := vars["hash"]
+	json.NewEncoder(w).Encode(secretHash)
+}
+
+// controller to update a given secret message
+func updateSecretHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	secretHash := vars["hash"]
 	json.NewEncoder(w).Encode(secretHash)
