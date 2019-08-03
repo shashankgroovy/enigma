@@ -1,0 +1,64 @@
+* {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 200;
+    color: white;
+}
+body {
+    background: url("https://wallpaperplay.com/walls/full/7/7/6/12874.jpg");
+    background-size:     cover;
+    background-repeat:   no-repeat;
+    background-position: center center;
+    color: white;
+}
+.sealing-jutsu {
+    width: 100%;
+    margin: 5rem 1rem;
+}
+.secret-text {
+    font-weight: 200;
+    font-size: 2rem;
+    text-align: center;
+}
+.info-text {
+    font-weight: 200;
+    font-size: 3rem;
+    text-align: center;
+}
+.info-label {
+    font-weight: 200;
+    text-transform: uppercase;
+    text-align: center;
+}
+.share-link {
+    margin: 3rem 0;
+}
+.copy-row {
+    margin: 0 !important;
+}
+.copy-row input {
+    font-size: 1.5rem;
+    background: rgba(0,0,0,0.3) !important;
+}
+.copy-button {
+    font-size: 2rem;
+    padding: 0 1rem;
+    color: white;
+    display: none;
+}
+
+@media (min-width: 550px) {
+
+    .secret-text {
+        text-align: left;
+    }
+    .info-text {
+        text-align: left;
+    }
+    .info-label {
+        text-align: left;
+    }
+    .copy-button {
+        display: block;
+    }
+}
+

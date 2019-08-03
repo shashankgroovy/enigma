@@ -1,5 +1,5 @@
 
-![Enigma Logo](./static/images/enigma.png)
+![Enigma Logo](./dist/static/images/enigma.png)
 
 
 Enigma
@@ -63,7 +63,7 @@ code. And to run simply do the following to make the server go live:
   JSON and can be extended to support YAML.
 
 ## Credits
-The logo is a reference to the [Eight Trigrams Sealing Style](https://naruto.fandom.com/wiki/Eight_Trigrams_Sealing_Style)
+The logo is a reference to the [Eight Trigrams Sealing Jutsu](https://naruto.fandom.com/wiki/Eight_Trigrams_Sealing_Style)
 in the anime © Naruto.
 
 ## Contribution

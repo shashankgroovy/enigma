@@ -14,12 +14,19 @@ func ConfigureRoutes() *mux.Router {
 	r := mux.NewRouter().StrictSlash(true)
 	r.Use(utils.RequestLogger)
 
-	// Index urls
-	r.HandleFunc("/", baseHandler).Methods(http.MethodGet)
+	// Health check
 	r.HandleFunc("/health", healthCheckHandler).Methods(http.MethodGet)
 
-	r = setupStaticRoutes(r)
+	// NOTE: It's important that subapps are served before the catch-all route ("/")
+	// Setup sub apps or apis
 	r = setupApiRoutes(r)
+
+	// Serve static files
+	r = setupStaticRoutes(r)
+
+	// This should be the final route handling to catch-all requests and serve
+	// our JavaScript application's entry-point (index.html).
+	r.PathPrefix("/").HandlerFunc(baseHandler("dist/index.html"))
 
 	return r
 }
@@ -29,10 +36,10 @@ func setupStaticRoutes(r *mux.Router) *mux.Router {
 
 	// Serve static files
 	var dir string
-	flag.StringVar(&dir, "dir", "static", "The directory for static file content")
+	flag.StringVar(&dir, "dir", "dist", "The directory for static file content")
 	flag.Parse()
-	r.PathPrefix("/static/").Handler(http.StripPrefix(
-		"/static/",
+	r.PathPrefix("/dist/").Handler(http.StripPrefix(
+		"/dist/",
 		http.FileServer(http.Dir(dir))),
 	)
 
@@ -51,6 +58,6 @@ func setupApiRoutes(r *mux.Router) *mux.Router {
 	api.HandleFunc("/secret/{hash}", deleteSecretHandler).Methods(http.MethodDelete)
 
 	// CORS
-	api.Use(mux.CORSMethodMiddleware(api))
+	// api.Use(mux.CORSMethodMiddleware(api))
 	return r
 }

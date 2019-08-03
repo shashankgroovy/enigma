@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"html/template"
 	"log"
 	"net/http"
 	"strconv"
@@ -14,10 +13,11 @@ import (
 )
 
 // controller for rendering the homepage
-func baseHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
-	tmpl.Execute(w, nil)
+func baseHandler(entrypoint string) func(w http.ResponseWriter, r *http.Request) {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, entrypoint)
+	}
+	return http.HandlerFunc(fn)
 }
 
 // controller for health check
@@ -57,6 +57,8 @@ func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 	sec.CreateSecret()
 
 	sec.SecretText = secretText
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sec)
 }
 
@@ -78,6 +80,8 @@ func getSecretHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sec.SecretText = string(secretText)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sec)
 }
 
@@ -99,6 +103,8 @@ func updateSecretHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sec.SecretText = string(secretText)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sec)
 }
 
