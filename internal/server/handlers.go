@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -27,11 +28,47 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 // controller to create a secret message
 func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 
-	r.ParseForm()
-	secretText := r.FormValue("secretText")
-	createdAt, _ := strconv.Atoi(r.FormValue("createdAt"))
-	expiresAt, _ := strconv.Atoi(r.FormValue("expiresAt"))
-	remainingViews, _ := strconv.Atoi(r.FormValue("remainingViews"))
+	// declare the Secret
+	var sec models.Secret
+	var secretText string
+
+	switch r.Header.Get("Content-Type") {
+
+	case "application/json":
+		// Content-Type: application/json
+		// Populate the struct from JSON Data
+		err := json.NewDecoder(r.Body).Decode(&sec)
+		if err != nil {
+			log.Printf("decoded %+v", sec)
+		}
+		log.Printf("decoded 2 %+v", sec)
+
+	default:
+		// Content-Type: application/x-www-form-urlencoded
+		// Populate the struct with Form Data
+
+		// Parse form data
+		r.ParseForm()
+		secretText = r.FormValue("secretText")
+		createdAt, _ := strconv.Atoi(r.FormValue("createdAt"))
+		expiresAt, _ := strconv.Atoi(r.FormValue("expiresAt"))
+		remainingViews, _ := strconv.Atoi(r.FormValue("remainingViews"))
+
+		sec.SecretText = secretText
+		sec.CreatedAt = createdAt
+		sec.ExpiresAt = expiresAt
+		sec.RemainingViews = remainingViews
+	}
+
+	if sec.SecretText == "" {
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusBadRequest,
+			Error:  "Not enough parameters",
+		}
+		log.Print("Not enough parameters")
+		utils.RequestResponder(w, r, http.StatusBadRequest, resp)
+		return
+	}
 
 	// Generate a unique uuid for hash
 	uuid := guuid.New().String()
@@ -40,21 +77,23 @@ func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 	cipherText, err := utils.Encrypt([]byte(secretText), []byte(uuid[:32]))
 
 	if err != nil {
-		log.Fatal("Couldn't encrypt text", err)
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusNotFound,
+			Error:  err.Error(),
+		}
+		log.Print("Couldn't encrypt text", err)
+
+		utils.RequestResponder(w, r, http.StatusNotFound, resp)
+		return
 	}
 
-	sec := models.Secret{
-		Hash:           uuid,
-		SecretText:     string(cipherText),
-		CreatedAt:      createdAt,
-		ExpiresAt:      expiresAt,
-		RemainingViews: remainingViews,
-	}
+	// Populate secret struct
+	sec.Hash = uuid
+	sec.SecretText = string(cipherText)
 
 	sec.CreateSecret()
-	sec.SecretText = secretText
 
-	utils.RequestResponder(w, r, http.StatusOK, "Alive")
+	utils.RequestResponder(w, r, http.StatusOK, sec)
 }
 
 // controller to get a given secret message
@@ -81,7 +120,7 @@ func getSecretHandler(w http.ResponseWriter, r *http.Request) {
 	secretText, err := utils.Decrypt([]byte(sec.SecretText), []byte(secretHash[:32]))
 
 	if err != nil {
-		log.Fatal("Couldn't decrypt text ", err)
+		log.Print("Couldn't decrypt text ", err)
 		resp := utils.ErrorResponseObject{
 			Status: http.StatusNotFound,
 			Error:  err.Error(),
@@ -92,10 +131,10 @@ func getSecretHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sec.SecretText = string(secretText)
-	if sec.RemainingViews < 0 {
+	if sec.RemainingViews <= 0 {
 		resp := utils.ErrorResponseObject{
 			Status: http.StatusNotFound,
-			Error:  err.Error(),
+			Error:  "Expired secret!",
 		}
 		utils.RequestResponder(w, r, http.StatusNotFound, resp)
 		return
@@ -111,7 +150,26 @@ func updateSecretHandler(w http.ResponseWriter, r *http.Request) {
 	var sec models.Secret
 	sec.Hash = secretHash
 
-	err := sec.UpdateSecret()
+	err := sec.GetSecret()
+	if err != nil {
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusNotFound,
+			Error:  err.Error(),
+		}
+
+		utils.RequestResponder(w, r, http.StatusNotFound, resp)
+		return
+	} else if sec.RemainingViews < 0 {
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusNotFound,
+			Error:  "Expired secret!",
+		}
+
+		utils.RequestResponder(w, r, http.StatusNotFound, resp)
+		return
+	}
+
+	err = sec.UpdateSecret()
 
 	if err != nil {
 		resp := utils.ErrorResponseObject{
@@ -127,7 +185,7 @@ func updateSecretHandler(w http.ResponseWriter, r *http.Request) {
 	secretText, err := utils.Decrypt([]byte(sec.SecretText), []byte(secretHash[:32]))
 
 	if err != nil {
-		log.Fatal("Couldn't decrypt text", err)
+		log.Print("Couldn't decrypt text", err)
 		resp := utils.ErrorResponseObject{
 			Status: http.StatusNotFound,
 			Error:  err.Error(),

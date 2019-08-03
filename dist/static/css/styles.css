@@ -54,10 +54,12 @@ input, textarea {
     color: white;
 }
 .button-enigma,
+.button-enigma:active,
 .button-enigma:hover,
-.button-enigma:focus {
-    padding: 0 2rem;
-    color: white;
+.button-enigma:focus,
+.button-enigma:visited {
+    padding: 0 2rem !important;
+    color: white !important;
 }
 .button-copy {
     display: none;

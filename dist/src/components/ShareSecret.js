@@ -2,7 +2,7 @@ export default {
   name: 'ShareSecret',
   data() {
     return {
-      hash: "",
+      slug: "",
       secretText: "",
       expiresAt: 0,
       remainingViews: 0,
@@ -11,24 +11,27 @@ export default {
   methods: {
     handleSubmit: function() {
       let formData = new FormData()
-      console.log(formData)
+
       // Populate form data with the necessary fields.
       formData.set('secretText', this.secretText);
       formData.set('expiresAt', this.expiresAt);
       formData.set('remainingViews', this.remainingViews);
-      console.log(formData)
-      axios({
-        method: 'post',
-        url: '/api/v1/secret',
-        data: formData,
-        headers: {
-          'content-type': `multipart/form-data; boundary=${formData._boundary}`,
+
+      axios.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
+      axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+      axios.post('/api/v1/secret',
+        formData,
+        { headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
-      }).then(res => {
-        console.log(res)
-        this.hash = res.data.hash;
-        // this.$router.push()
-      });
+        }).then(res => {
+          console.log(res)
+          this.slug = res.data.hash;
+          this.$router.push({ name: 'reveal', params: { slug: this.slug }})
+        }).catch(err => {
+          this.show = true;
+          console.log(err)
+        })
     }
   },
   template: `
@@ -39,7 +42,7 @@ export default {
             <div class="row">
                 <div class="six columns">
                     <label for="remainingViews">Views Allowed</label>
-                    <input v-model.number="remainingViews" class="input u-full-width" type="number" min="0" placeholder="Select number of views" id="remainingViews" oninput="validity.valid||(value='');">
+                    <input v-model.number="remainingViews" class="input u-full-width" type="number" min="1" placeholder="Select number of views" id="remainingViews" oninput="validity.valid||(value='');">
                 </div>
                 <div class="six columns">
                     <label for="expiresAt">Expires in Minutes</label>

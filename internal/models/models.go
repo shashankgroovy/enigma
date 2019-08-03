@@ -9,11 +9,11 @@ import (
 
 // Struct for containing secret
 type Secret struct {
-	Hash           string `json:"hash" bson:"hash"`
-	SecretText     string `json:"secretText" bson:"secretText"`
-	CreatedAt      int    `json:"createdAt" bson:"createsAt"`
-	ExpiresAt      int    `json:"expiresAt" bson:"expiresAt"`
-	RemainingViews int    `json:"remainingViews" bson:"remainingViews"`
+	Hash           string `json:"hash" bson:"hash" xml:"hash"`
+	SecretText     string `json:"secretText" bson:"secretText" yaml:"secretHash"`
+	CreatedAt      int    `json:"createdAt,string" bson:"createsAt" yaml:"createdAt"`
+	ExpiresAt      int    `json:"expiresAt,string" bson:"expiresAt" yaml:"expiresAt"`
+	RemainingViews int    `json:"remainingViews,string" bson:"remainingViews" yaml:"remainingViews"`
 }
 
 // CreateSecret method creates a new secret

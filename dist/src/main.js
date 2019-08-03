@@ -5,8 +5,8 @@ import RevealSecret from './components/RevealSecret.js'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', component: ShareSecret },
-  { path: '/secret/:hash', component: RevealSecret }
+  { path: '/', component: ShareSecret, name: 'share' },
+  { path: '/secret/:slug', component: RevealSecret, name: 'reveal' }
 ]
 
 const router = new VueRouter({
