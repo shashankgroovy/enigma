@@ -17,19 +17,21 @@ type Secret struct {
 }
 
 // CreateSecret method creates a new secret
-func (s *Secret) CreateSecret() {
+func (s *Secret) CreateSecret() error {
 	collection := GetDefaultCollection(DB)
 
 	// Execute the query
 	_, err := collection.InsertOne(context.Background(), s)
 	if err != nil {
-		log.Fatal(err)
+		log.Print("Couldn't create a secret. ", err)
+		return err
 	}
 	log.Print("Created a secret! ", s.Hash)
+	return nil
 }
 
 // GetSecret method fetches a secret
-func (s *Secret) GetSecret() {
+func (s *Secret) GetSecret() error {
 	collection := GetDefaultCollection(DB)
 
 	// conditions
@@ -40,12 +42,15 @@ func (s *Secret) GetSecret() {
 
 	if err != nil {
 		log.Print("Secret not found.", err)
+		return err
 	}
+
 	log.Print("Found a secret! ", s.Hash)
+	return nil
 }
 
 // UpdateSecret method updates a given secret
-func (s *Secret) UpdateSecret() {
+func (s *Secret) UpdateSecret() error {
 	collection := GetDefaultCollection(DB)
 
 	// conditions
@@ -61,12 +66,14 @@ func (s *Secret) UpdateSecret() {
 
 	if err != nil {
 		log.Print("Secret not found.", err)
+		return err
 	}
 	log.Print("Updated a secret! ", s.Hash)
+	return nil
 }
 
 // DeleteSecrets method deletes a given secret
-func (s *Secret) DeleteSecret() {
+func (s *Secret) DeleteSecret() error {
 	collection := GetDefaultCollection(DB)
 
 	// conditions
@@ -77,6 +84,8 @@ func (s *Secret) DeleteSecret() {
 
 	if err != nil {
 		log.Print("Secret not found.", err)
+		return err
 	}
 	log.Print("Deleted a secret!")
+	return nil
 }

@@ -2,6 +2,7 @@ export default {
   name: 'ShareSecret',
   data() {
     return {
+      hash: "",
       secretText: "",
       expiresAt: 0,
       remainingViews: 0,
@@ -25,12 +26,13 @@ export default {
         },
       }).then(res => {
         console.log(res)
+        this.hash = res.data.hash;
+        // this.$router.push()
       });
     }
   },
   template: `
     <div id="share-secret">
-        <h3 id="msg">{{ secretText }}</h3>
         <form>
             <label for="textarea">Secret Message</label>
             <textarea v-model="secretText" id="textarea" class="u-full-width" placeholder="Type your secret message here"></textarea>
@@ -44,7 +46,7 @@ export default {
                     <input v-model.number="expiresAt" class="input u-full-width" type="number" min="0" placeholder="Expire after minutes" id="expiresAt" oninput="validity.valid||(value='');">
                 </div>
             </div>
-            <button @click="handleSubmit" class="button-primary">Share <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+            <button @click="handleSubmit" class="button-enigma">Share <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
         </form>
     </div>
   `,

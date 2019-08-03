@@ -8,7 +8,15 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/thedevsaddam/renderer"
 )
+
+// ErrorResponseObject can be used to send back error responses
+type ErrorResponseObject struct {
+	Status int    `json:status`
+	Error  string `json:error`
+}
 
 // RequestLogger hijacks a request and logs it for viewing
 func RequestLogger(next http.Handler) http.Handler {
@@ -57,4 +65,21 @@ func Decrypt(ciphertext []byte, key []byte) ([]byte, error) {
 
 	nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
 	return gcm.Open(nil, nonce, ciphertext, nil)
+}
+
+//
+func RequestResponder(w http.ResponseWriter, req *http.Request, statusCode int, data interface{}) {
+	// create a renderer object
+	rnd := renderer.New()
+
+	switch req.Header.Get("Accept") {
+	case renderer.ContentJSON:
+		rnd.JSON(w, statusCode, data)
+	case renderer.ContentXML:
+		rnd.XML(w, statusCode, data)
+	case renderer.ContentYAML:
+		rnd.YAML(w, statusCode, data)
+	default:
+		rnd.JSON(w, statusCode, data)
+	}
 }

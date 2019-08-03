@@ -4,15 +4,28 @@
     color: white;
 }
 body {
-    background: url("https://wallpaperplay.com/walls/full/7/7/6/12874.jpg");
-    background-size:     cover;
-    background-repeat:   no-repeat;
-    background-position: center center;
+    background: url("https://wallpaperplay.com/walls/full/7/7/6/12874.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     color: white;
 }
+.jutsu-box {
+    margin: 3rem 0 0;
+}
+.jutsu {
+    font-size: 9rem;
+    text-transform: uppercase;
+    margin: 0;
+}
+.image-box {
+    margin: 0;
+    text-align: center;
+}
 .sealing-jutsu {
-    width: 100%;
-    margin: 5rem 1rem;
+    width: 30%;
+    margin: 0 0 3rem;
 }
 .secret-text {
     font-weight: 200;
@@ -35,19 +48,35 @@ body {
 .copy-row {
     margin: 0 !important;
 }
-.copy-row input {
+input, textarea {
     font-size: 1.5rem;
     background: rgba(0,0,0,0.3) !important;
-}
-.copy-button {
-    font-size: 2rem;
-    padding: 0 1rem;
     color: white;
+}
+.button-enigma,
+.button-enigma:hover,
+.button-enigma:focus {
+    padding: 0 2rem;
+    color: white;
+}
+.button-copy {
     display: none;
 }
 
 @media (min-width: 550px) {
 
+    .jutsu-box {
+        margin: 5rem 0 0;
+    }
+    .jutsu {
+        font-size: 12rem;
+        text-transform: uppercase;
+        margin: auto;
+    }
+    .sealing-jutsu {
+        width: auto;
+        margin: 5rem 1rem;
+    }
     .secret-text {
         text-align: left;
     }
@@ -57,7 +86,7 @@ body {
     .info-label {
         text-align: left;
     }
-    .copy-button {
+    .button-copy {
         display: block;
     }
 }

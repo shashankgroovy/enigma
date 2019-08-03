@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -22,9 +21,7 @@ func baseHandler(entrypoint string) func(w http.ResponseWriter, r *http.Request)
 
 // controller for health check
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode("Alive!")
+	utils.RequestResponder(w, r, http.StatusOK, "Alive")
 }
 
 // controller to create a secret message
@@ -55,11 +52,9 @@ func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sec.CreateSecret()
-
 	sec.SecretText = secretText
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(sec)
+
+	utils.RequestResponder(w, r, http.StatusOK, "Alive")
 }
 
 // controller to get a given secret message
@@ -70,19 +65,42 @@ func getSecretHandler(w http.ResponseWriter, r *http.Request) {
 	var sec models.Secret
 	sec.Hash = secretHash
 
-	sec.GetSecret()
+	err := sec.GetSecret()
+
+	if err != nil {
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusNotFound,
+			Error:  err.Error(),
+		}
+
+		utils.RequestResponder(w, r, http.StatusNotFound, resp)
+		return
+	}
 
 	// Decrypt the secret message with secret hash
 	secretText, err := utils.Decrypt([]byte(sec.SecretText), []byte(secretHash[:32]))
 
 	if err != nil {
-		log.Fatal("Couldn't decrypt text", err)
+		log.Fatal("Couldn't decrypt text ", err)
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusNotFound,
+			Error:  err.Error(),
+		}
+
+		utils.RequestResponder(w, r, http.StatusNotFound, resp)
+		return
 	}
 
 	sec.SecretText = string(secretText)
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(sec)
+	if sec.RemainingViews < 0 {
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusNotFound,
+			Error:  err.Error(),
+		}
+		utils.RequestResponder(w, r, http.StatusNotFound, resp)
+		return
+	}
+	utils.RequestResponder(w, r, http.StatusOK, sec)
 }
 
 // controller to update a given secret message
@@ -93,28 +111,46 @@ func updateSecretHandler(w http.ResponseWriter, r *http.Request) {
 	var sec models.Secret
 	sec.Hash = secretHash
 
-	sec.UpdateSecret()
+	err := sec.UpdateSecret()
+
+	if err != nil {
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusNotFound,
+			Error:  err.Error(),
+		}
+
+		utils.RequestResponder(w, r, http.StatusNotFound, resp)
+		return
+	}
 
 	// Decrypt the secret message with secret hash
 	secretText, err := utils.Decrypt([]byte(sec.SecretText), []byte(secretHash[:32]))
 
 	if err != nil {
 		log.Fatal("Couldn't decrypt text", err)
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusNotFound,
+			Error:  err.Error(),
+		}
+		utils.RequestResponder(w, r, http.StatusNotFound, resp)
+		return
 	}
 
 	sec.SecretText = string(secretText)
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(sec)
+	utils.RequestResponder(w, r, http.StatusOK, sec)
 }
 
 // controller to delete a given secret message
 func deleteSecretHandler(w http.ResponseWriter, r *http.Request) {
+
 	// Explicitly making it  since it's not required.
 	log.Print("Delete operations are not permitted.")
-	w.WriteHeader(http.StatusMethodNotAllowed)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w)
+
+	resp := utils.ErrorResponseObject{
+		Status: http.StatusMethodNotAllowed,
+		Error:  "Delete operations are not permitted",
+	}
+	utils.RequestResponder(w, r, http.StatusMethodNotAllowed, resp)
 	return
 
 	vars := mux.Vars(r)
@@ -124,5 +160,5 @@ func deleteSecretHandler(w http.ResponseWriter, r *http.Request) {
 	sec.Hash = secretHash
 
 	sec.DeleteSecret()
-	json.NewEncoder(w).Encode(sec)
+	utils.RequestResponder(w, r, http.StatusOK, sec)
 }
