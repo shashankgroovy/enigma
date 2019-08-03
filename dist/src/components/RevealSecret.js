@@ -47,7 +47,7 @@ export default {
   template: `
     <div id="reveal-secret">
       <label class="info-label">Your super secret message</label>
-      <p class="secret-text">{{ secretText }} Lorem labore optio minima fugiat doloremque? Ullam neque delectus quo corporis dolor Ut temporibus iusto minus distinctio doloribus pariatur quam Provident officia tempore quae ipsam maiores. Tempore ut mollitia mollitia?</p>
+      <p class="secret-text">{{ secretText }}</p>
 
       <div class="row">
         <div class="six columns">
