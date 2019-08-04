@@ -14,7 +14,7 @@ secrets.
 Secret messages will self-destruct/expire after it has been viewed a given
 number of times or if the time expires.
 
-# [Live Demo](https://blooming-hollows-63159.herokuapp.com/)
+# [Live Demo](https://enigma-secrets.herokuapp.com/)
 
 See it live!
 
@@ -65,6 +65,11 @@ code. And to run simply do the following to make the server go live:
 ## Credits
 The logo is a reference to the [Eight Trigrams Sealing Jutsu](https://naruto.fandom.com/wiki/Eight_Trigrams_Sealing_Style)
 in the anime © Naruto.
+
+## Screenshots
+![Enigma - Share secret](./dist/static/images/scrot/share-secret.png)
+![Enigma - Reveal secret](./dist/static/images/scrot/reveal-secret.png)
+![Enigma - Lost secret](./dist/static/images/scrot/lost-secret.png)
 
 ## Contribution
 Well this is kind of a learning project, feel free to fork it and happy hacking :)

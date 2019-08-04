@@ -48,7 +48,7 @@ body {
     display: block;
 }
 .share-link {
-    margin: 3rem 0;
+    margin: 1rem 0;
 }
 .copy-row {
     margin: 0 !important;
@@ -104,8 +104,12 @@ input, textarea {
     .info-label {
         text-align: left;
     }
+    .button-enigma {
+        margin: 2rem 0;
+    }
     .button-copy {
         display: block;
+        margin: 0;
     }
 }
 
