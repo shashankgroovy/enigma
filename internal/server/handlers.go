@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	guuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -29,8 +30,11 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 
 	// declare the Secret
-	var sec models.Secret
-	var secretText string
+	var (
+		sec        models.Secret
+		secretText string
+		expiresAt  int64
+	)
 
 	switch r.Header.Get("Content-Type") {
 
@@ -43,6 +47,9 @@ func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		log.Printf("decoded 2 %+v", sec)
 
+		//get the expiry time for future calculation
+		expiresAt = sec.ExpiresAt
+
 	default:
 		// Content-Type: application/x-www-form-urlencoded
 		// Populate the struct with Form Data
@@ -50,13 +57,10 @@ func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 		// Parse form data
 		r.ParseForm()
 		secretText = r.FormValue("secretText")
-		createdAt, _ := strconv.Atoi(r.FormValue("createdAt"))
-		expiresAt, _ := strconv.Atoi(r.FormValue("expiresAt"))
+		expiresAt, _ = strconv.ParseInt(r.FormValue("expiresAt"), 10, 64) // int64 conversion
 		remainingViews, _ := strconv.Atoi(r.FormValue("remainingViews"))
 
 		sec.SecretText = secretText
-		sec.CreatedAt = createdAt
-		sec.ExpiresAt = expiresAt
 		sec.RemainingViews = remainingViews
 	}
 
@@ -87,8 +91,13 @@ func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	now := time.Now().Unix()
+
 	// Populate secret struct
 	sec.Hash = uuid
+	sec.CreatedAt = now
+	sec.ExpiresAt = int64(now) + expiresAt*60
+	log.Print(expiresAt, int64(now)+expiresAt*60)
 	sec.SecretText = string(cipherText)
 
 	sec.CreateSecret()
@@ -131,12 +140,19 @@ func getSecretHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sec.SecretText = string(secretText)
+
+	// Create an expired error response
+	expiredResp := utils.ErrorResponseObject{
+		Status: http.StatusNotFound,
+		Error:  "Expired secret!",
+	}
+	now := time.Now().Unix()
+
 	if sec.RemainingViews <= 0 {
-		resp := utils.ErrorResponseObject{
-			Status: http.StatusNotFound,
-			Error:  "Expired secret!",
-		}
-		utils.RequestResponder(w, r, http.StatusNotFound, resp)
+		utils.RequestResponder(w, r, http.StatusNotFound, expiredResp)
+		return
+	} else if now-sec.ExpiresAt >= 0 && sec.ExpiresAt != sec.CreatedAt {
+		utils.RequestResponder(w, r, http.StatusNotFound, expiredResp)
 		return
 	}
 	utils.RequestResponder(w, r, http.StatusOK, sec)

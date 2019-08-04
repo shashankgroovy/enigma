@@ -11,8 +11,8 @@ import (
 type Secret struct {
 	Hash           string `json:"hash" bson:"hash" xml:"hash"`
 	SecretText     string `json:"secretText" bson:"secretText" yaml:"secretHash"`
-	CreatedAt      int    `json:"createdAt,string" bson:"createsAt" yaml:"createdAt"`
-	ExpiresAt      int    `json:"expiresAt,string" bson:"expiresAt" yaml:"expiresAt"`
+	CreatedAt      int64  `json:"createdAt" bson:"createdAt" yaml:"createdAt"`
+	ExpiresAt      int64  `json:"expiresAt" bson:"expiresAt" yaml:"expiresAt"`
 	RemainingViews int    `json:"remainingViews,string" bson:"remainingViews" yaml:"remainingViews"`
 }
 

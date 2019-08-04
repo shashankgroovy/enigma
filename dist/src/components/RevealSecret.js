@@ -4,11 +4,30 @@ export default {
     return {
       show: false,
       notFound: true,
+      countdownToggle: true,
       slug: "",
       secretText: "",
+      createdAt: 0,
       expiresAt: 0,
       remainingViews: 0,
       shareableUrl: "",
+      nowEpoch: Math.trunc(Date.now() / 1000)
+    }
+  },
+  computed: {
+    countDownSec () {
+      if (this.expiresAt == this.createdAt) {
+        return "∞;" // infinity
+      }
+      let sec = Math.trunc(this.expiresAt - this.nowEpoch);
+      return sec >= 0 ? sec : "Expired";
+    },
+    countDownMin () {
+      if (this.expiresAt == this.createdAt) {
+        return "∞;" // infinity
+      }
+      let min = Math.trunc((this.expiresAt - this.nowEpoch) / 60) % 60
+      return min >= -1 ? min : "Expired";
     }
   },
   methods: {
@@ -23,6 +42,11 @@ export default {
     }
   },
   mounted() {
+    // update the date for countdown to expiry
+    window.setInterval(() => {
+        this.nowEpoch = Math.trunc(Date.now() / 1000);
+    },1000);
+
     this.slug = window.location.pathname.split("/secret/")[1]
     let request_url = '/api/v1/secret/' + this.slug
 
@@ -33,6 +57,7 @@ export default {
         this.notFound = false;
         console.log("GET", res);
         this.secretText = res.data.secretText;
+        this.createdAt = res.data.createdAt;
         this.expiresAt = res.data.expiresAt;
         this.remainingViews = res.data.remainingViews;
         this.shareableUrl = window.location.host + '/secret/' + res.data.hash;
@@ -75,9 +100,19 @@ export default {
             <label class="info-label">Views left</label>
           </div>
 
-          <div class="six columns">
-            <label class="info-text">{{ expiresAt }}</label>
-            <label class="info-label">Minutes to expire</label>
+          <div class="six columns timer">
+            <transition name="fade" mode="out-in">
+              <div v-if="countdownToggle" @click="countdownToggle = !countdownToggle">
+                <p class="info-text">{{ countDownMin }}</p>
+                <p class="info-label">Minutes to expire</p>
+              </div>
+            </transition>
+            <transition name="fade" mode="out-in">
+              <div v-if="!countdownToggle" @click="countdownToggle = !countdownToggle">
+                <p class="info-text">{{ countDownSec }}</p>
+                <p class="info-label">Seconds to expire</p>
+              </div>
+            </transition>
           </div>
         </div>
 

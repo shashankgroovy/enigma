@@ -36,11 +36,16 @@ body {
     font-weight: 200;
     font-size: 3rem;
     text-align: center;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 0;
 }
 .info-label {
     font-weight: 200;
     text-transform: uppercase;
     text-align: center;
+    cursor: pointer;
+    display: block;
 }
 .share-link {
     margin: 3rem 0;
@@ -64,6 +69,16 @@ input, textarea {
 .button-copy {
     display: none;
 }
+.timer {
+    cursor: pointer;
+}
+
+.fade-enter-active{
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-active {
+  opacity: 0;
+}
 
 @media (min-width: 550px) {
 
@@ -80,6 +95,7 @@ input, textarea {
         margin: 5rem 1rem;
     }
     .secret-text {
+        font-size: 3rem;
         text-align: left;
     }
     .info-text {
