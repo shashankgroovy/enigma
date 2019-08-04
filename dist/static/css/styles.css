@@ -80,12 +80,25 @@ input, textarea {
 .timer {
     cursor: pointer;
 }
+.error-label {
+    margin: 2.2rem 0;
+}
 
 .fade-enter-active{
   transition: opacity .5s;
 }
 .fade-enter, .fade-leave-active {
   opacity: 0;
+}
+
+/* Some flicker animation for errors */
+@keyframes flickerAnimation {
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+.animate-flicker {
+    animation: flickerAnimation 3s infinite;
 }
 
 @media (min-width: 550px) {

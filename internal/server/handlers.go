@@ -64,12 +64,23 @@ func createSecretHandler(w http.ResponseWriter, r *http.Request) {
 		sec.RemainingViews = remainingViews
 	}
 
+	// Basic validations
 	if sec.SecretText == "" {
 		resp := utils.ErrorResponseObject{
 			Status: http.StatusBadRequest,
-			Error:  "Not enough parameters",
+			Error:  "Secret cannot be empty",
 		}
-		log.Print("Not enough parameters")
+		log.Print("Secret cannot be empty.")
+		utils.RequestResponder(w, r, http.StatusBadRequest, resp)
+		return
+	}
+
+	if sec.RemainingViews == 0 {
+		resp := utils.ErrorResponseObject{
+			Status: http.StatusBadRequest,
+			Error:  "Minimum views can be 1",
+		}
+		log.Print("Secret cannot have 0 views left.")
 		utils.RequestResponder(w, r, http.StatusBadRequest, resp)
 		return
 	}

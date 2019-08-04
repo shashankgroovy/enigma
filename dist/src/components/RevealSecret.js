@@ -3,6 +3,7 @@ export default {
   data() {
     return {
       show: false,
+      view: false,
       notFound: true,
       countdownToggle: true,
       slug: "",
@@ -14,23 +15,30 @@ export default {
       nowEpoch: Math.trunc(Date.now() / 1000)
     }
   },
+  created () {
+    if (this.$route.query.view) {
+      this.view = this.$route.query.view;
+    }
+  },
   computed: {
+    // Countdown timers
     countDownSec () {
       if (this.expiresAt == this.createdAt) {
-        return "∞;" // infinity
+        return "∞"; // infinity
       }
       let sec = Math.trunc(this.expiresAt - this.nowEpoch);
       return sec >= 0 ? sec : "Expired";
     },
     countDownMin () {
       if (this.expiresAt == this.createdAt) {
-        return "∞;" // infinity
+        return "∞"; // infinity
       }
       let min = Math.trunc((this.expiresAt - this.nowEpoch) / 60) % 60
       return min >= -1 ? min : "Expired";
     }
   },
   methods: {
+    // copy method here is used to copy the shareable link
     copy() {
       var copyText = document.getElementById("shareableUrl");
 
@@ -64,7 +72,9 @@ export default {
 
         // Entire view has been rendered
         // Send a put request to backend to update the number of views
-        if (this.remainingViews > 0) {
+        // this.view is to check for first render. We don't need to decrement
+        // the view count when redirected after secret creation.
+        if (!this.view && this.remainingViews > 0) {
 
           axios
             .put(request_url)
