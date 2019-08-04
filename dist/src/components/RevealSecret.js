@@ -60,7 +60,7 @@ export default {
         this.createdAt = res.data.createdAt;
         this.expiresAt = res.data.expiresAt;
         this.remainingViews = res.data.remainingViews;
-        this.shareableUrl = window.location.host + '/secret/' + res.data.hash;
+        this.shareableUrl = `${window.location.protocol}//${window.location.host}/secret/${res.data.hash}`;
 
         // Entire view has been rendered
         // Send a put request to backend to update the number of views
