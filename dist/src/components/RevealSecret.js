@@ -118,7 +118,7 @@ export default {
 
         <div class="row share-link" v-if="shareableUrl">
           <label class="info-label">Shareable link</label>
-          <div class="ten columns copy-row">
+          <div class="ten columns copy-row" @click="copy">
             <input id="shareableUrl" class="input u-full-width" type="text" v-model="shareableUrl" readonly="readonly">
           </div>
           <div class="one columns">
