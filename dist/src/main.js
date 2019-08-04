@@ -14,6 +14,31 @@ const router = new VueRouter({
   mode: 'history'
 })
 
+router.beforeResolve((to, from, next) => {
+  // If this isn't an initial page load.
+  if (to.name) {
+      // Start the route progress bar.
+      NProgress.start()
+  }
+  next()
+})
+
+router.afterEach((to, from) => {
+  // Complete the animation of the route progress bar.
+  NProgress.done()
+})
+
+axios.interceptors.request.use(config => {
+  NProgress.start()
+  return config
+})
+
+// before a response is returned stop nprogress
+axios.interceptors.response.use(response => {
+  NProgress.done()
+  return response
+})
+
 new Vue({
   el: '#app',
   router,

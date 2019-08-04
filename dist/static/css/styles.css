@@ -3,13 +3,20 @@
     font-weight: 200;
     color: white;
 }
-body {
-    background: url("https://wallpaperplay.com/walls/full/7/7/6/12874.jpg") no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
+#nprogress .bar {
+    background: ##902e3b !important;
+}
+html {
+    margin: 0;
+    background: url("https://i.imgur.com/I2CE7MI.jpg");
+    height: 100%;
+    background-repeat: no-repeat;
     background-size: cover;
-    color: white;
+    background-position: 100% top;
+    background-attachment: fixed;
+}
+body {
+    height: 100%;
 }
 .jutsu-box {
     margin: 3rem 0 0;
@@ -63,6 +70,7 @@ input, textarea {
 .button-enigma:hover,
 .button-enigma:focus,
 .button-enigma:visited {
+    margin: 1rem 0;
     padding: 0 2rem !important;
     color: white !important;
 }
@@ -104,7 +112,11 @@ input, textarea {
     .info-label {
         text-align: left;
     }
-    .button-enigma {
+    .button-enigma,
+    .button-enigma:active,
+    .button-enigma:hover,
+    .button-enigma:focus,
+    .button-enigma:visited {
         margin: 2rem 0;
     }
     .button-copy {
