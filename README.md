@@ -28,7 +28,7 @@ Requirements
 Getting Started
 ---------------
 
-Run Enima backend server by issuing the following commands:
+Run Enigma backend server by issuing the following commands:
 
 ```
 λ go build -o bin/enigma -v
@@ -61,6 +61,8 @@ code. And to run simply do the following to make the server go live:
   api.
 * All CURD operations are possible via the RESTful api and can respond in XML,
   JSON and can be extended to support YAML.
+* Every secret is encrypted using AES algorithm in GCM Mode, thus making sure
+  that it's secure.
 
 ## Credits
 The logo is a reference to the [Eight Trigrams Sealing Jutsu](https://naruto.fandom.com/wiki/Eight_Trigrams_Sealing_Style)
